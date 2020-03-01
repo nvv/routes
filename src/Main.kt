@@ -1,8 +1,13 @@
 import java.util.*
 
+data class Destination<T>(
+        val id: T,
+        val name: String
+)
+
 data class Route<T, E>(
-        val src: T,
-        val dst: T,
+        val src: Destination<T>,
+        val dst: Destination<T>,
         val cost: E
 )
 
@@ -12,17 +17,16 @@ class Vertex<T>(
 
 class Graph<T, E>(
         val vertices: MutableMap<T, Vertex<T>> = mutableMapOf(),
+        val destinations: MutableMap<T, Destination<T>> = mutableMapOf(),
         val edges: MutableMap<Vertex<T>, LinkedList<Vertex<T>>> = mutableMapOf()
 ) {
-
     private val NEWLINE = System.getProperty("line.separator")
 
     private var edgeCount = 0
 
     fun putEdge(route: Route<T, E>) {
-
-        val vertex1 = getVertex(route.src)
-        val vertex2 = getVertex(route.dst)
+        val vertex1 = getVertex(route.src.id)
+        val vertex2 = getVertex(route.dst.id)
 
         var vertexEdges = edges[vertex1]
         if (vertexEdges == null) {
@@ -32,6 +36,8 @@ class Graph<T, E>(
 
         vertexEdges.add(vertex2)
 
+        destinations[route.src.id] = route.src
+        destinations[route.dst.id] = route.dst
         edgeCount++
     }
 
@@ -50,7 +56,7 @@ class Graph<T, E>(
 
     override fun toString(): String {
         val s = StringBuilder()
-        s.append("${vertices.size} vertices, ${edgeCount} edges $NEWLINE")
+        s.append("${vertices.size} vertices, $edgeCount edges $NEWLINE")
         vertices.forEach { v ->
             s.append("${v.value.vertex}: ")
             for (w in getEdges(v.value.vertex)) {
@@ -92,30 +98,39 @@ class PathFinder<T, E>(private val graph: Graph<T, E>) {
     private fun printCurrentPath() {
         LinkedList<T>(path).apply {
             if (size >= 1) {
-                print(pollLast())
+                val id = pollLast()
+                print("${graph.destinations[id]?.name} ($id)")
             }
             while (!isEmpty()) {
-                print(" -> " + pollLast())
+                val id = pollLast()
+                print(" -> ${graph.destinations[id]?.name} ($id)")
             }
+
             println()
         }
     }
-
 }
 
 fun main() {
 
+    val dst0 = Destination(0, "Vancouver")
+    val dst1 = Destination(1, "Calgary")
+    val dst2 = Destination(2, "Edmonton")
+    val dst3 = Destination(3, "Winnipeg")
+    val dst4 = Destination(4, "Toronto")
+    val dst5 = Destination(5, "Montreal")
+
     val routes = arrayOf(
-            Route(0, 1, 1),
-            Route(0, 2, 2),
-            Route(1, 3, 4),
-            Route(2, 3, 2),
-            Route(1, 2, 1),
-            Route(3, 4, 4),
-            Route(4, 5, 2),
-            Route(5, 1, 6),
-            Route(0, 4, 6),
-            Route(5, 3, 5)
+            Route(dst0, dst1, 1),
+            Route(dst0, dst2, 2),
+            Route(dst1, dst3, 4),
+            Route(dst2, dst3, 2),
+            Route(dst1, dst2, 1),
+            Route(dst3, dst4, 4),
+            Route(dst4, dst5, 2),
+            Route(dst5, dst1, 6),
+            Route(dst0, dst4, 6),
+            Route(dst5, dst3, 5)
     )
 
     val graph = Graph<Int, Int>()
