@@ -1,28 +1,38 @@
-data class Route<T, E>(val src: T, val dst: T, val cost: E)
+import java.util.*
 
-class Vertex<T>(val vertex: T, var visited: Boolean = false, val connections: MutableList<Vertex<T>> = mutableListOf())
+data class Route<T, E>(
+        val src: T,
+        val dst: T,
+        val cost: E
+)
 
-class Edge<T, E>(val vertex1: Vertex<T>, val vertex2: Vertex<T>, val value: E) {
-    fun hasVertex(vertex: Vertex<T>) = vertex == vertex1 || vertex == vertex2
-
-    fun oppositeVertex(vertex: Vertex<T>) = if (vertex == vertex1) vertex2 else vertex1
-
-}
+class Vertex<T>(
+        val vertex: T
+)
 
 class Graph<T, E>(
         val vertices: MutableMap<T, Vertex<T>> = mutableMapOf(),
-        val edges: MutableList<Edge<T, E>> = mutableListOf()
+        val edges: MutableMap<Vertex<T>, LinkedList<Vertex<T>>> = mutableMapOf()
 ) {
 
-    fun putVertex(route: Route<T, E>) {
+    private val NEWLINE = System.getProperty("line.separator")
+
+    private var edgeCount = 0
+
+    fun putEdge(route: Route<T, E>) {
 
         val vertex1 = getVertex(route.src)
         val vertex2 = getVertex(route.dst)
-        val value = route.cost
 
-        vertex1.connections.add(vertex2)
+        var vertexEdges = edges[vertex1]
+        if (vertexEdges == null) {
+            vertexEdges = LinkedList()
+            edges[vertex1] = vertexEdges
+        }
 
-        edges.add(Edge(vertex1, vertex2, value))
+        vertexEdges.add(vertex2)
+
+        edgeCount++
     }
 
     fun getVertex(key: T) =
@@ -34,34 +44,67 @@ class Graph<T, E>(
                 vertex
             }
 
-    fun countPaths(start: Vertex<T>, destination: Vertex<T>) {
-        val pathList = mutableListOf<MutableList<Vertex<T>>>()
-        start.connections.filter { !it.visited }.forEach {
-            it.visited = true
-            val path = mutableListOf<Vertex<T>>()
-            path.add(it)
-            count(it, destination, path)?.let {
-                pathList.add(path)
-            }
-        }
-        println(pathList.size)
+    fun getEdges(vertex: T): Iterable<Vertex<T>> {
+        return edges[getVertex(vertex)] ?: emptyList()
     }
 
-    fun count(start: Vertex<T>, destination: Vertex<T>, path: MutableList<Vertex<T>>): MutableList<Vertex<T>>? {
-        if (start != destination) {
-            start.connections.filter { !it.visited }.forEach {
-                it.visited = true
-                path.add(it)
-                count(it, destination, path)
+    override fun toString(): String {
+        val s = StringBuilder()
+        s.append("${vertices.size} vertices, ${edgeCount} edges $NEWLINE")
+        vertices.forEach { v ->
+            s.append("${v.value.vertex}: ")
+            for (w in getEdges(v.value.vertex)) {
+                s.append("${w.vertex} ")
             }
+            s.append(NEWLINE)
         }
 
-        return if (start == destination) path else null
+        return s.toString()
+    }
+}
+
+class PathFinder<T, E>(private val graph: Graph<T, E>) {
+
+    private val onPath: MutableMap<Vertex<T>, Boolean> = mutableMapOf<Vertex<T>, Boolean>().apply {
+        graph.vertices.forEach { item -> put(item.value, false) }
+    }
+
+    private val path = LinkedList<T>()
+    private var numberOfPaths: Int = 0
+
+    // use DFS
+    fun search(from: T, to: T) {
+        path.push(from)
+        val vertex = graph.getVertex(from)
+        onPath[vertex] = true
+
+        if (from == to) {
+            printCurrentPath()
+            numberOfPaths++
+        } else {
+            graph.getEdges(from).filter { edge -> onPath[edge]?.not() == true }.forEach { edge -> search(edge.vertex, to) }
+        }
+
+        path.pop()
+        onPath[vertex] = false
+    }
+
+    private fun printCurrentPath() {
+        LinkedList<T>(path).apply {
+            if (size >= 1) {
+                print(pollLast())
+            }
+            while (!isEmpty()) {
+                print(" -> " + pollLast())
+            }
+            println()
+        }
     }
 
 }
 
 fun main() {
+
     val routes = arrayOf(
             Route(0, 1, 1),
             Route(0, 2, 2),
@@ -76,7 +119,9 @@ fun main() {
     )
 
     val graph = Graph<Int, Int>()
-    routes.forEach { graph.putVertex(it) }
+    routes.forEach { graph.putEdge(it) }
 
-    graph.countPaths(graph.vertices[0]!!, graph.vertices[2]!!)
+    val allpaths = PathFinder(graph)
+    allpaths.search(0, 2)
+
 }
