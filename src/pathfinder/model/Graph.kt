@@ -5,15 +5,16 @@ import java.util.*
 /**
  * @author Vlad Namashko
  */
-class Graph<T>(
+class Graph<T, E>(
         val vertices: MutableMap<T, Vertex<T>> = mutableMapOf(),
-        val edges: MutableMap<Vertex<T>, LinkedList<Vertex<T>>> = mutableMapOf()) {
+        val edges: MutableMap<Vertex<T>, LinkedList<EdgeInfo<T, E>>> = mutableMapOf()
+) {
 
     private val NEWLINE = System.getProperty("line.separator")
 
     private var edgeCount = 0
 
-    fun putEdge(vertexName1: T, vertexName2: T) {
+    fun putEdge(vertexName1: T, vertexName2: T, edgeInfo: E) {
         val vertex1 = getVertex(vertexName1)
         val vertex2 = getVertex(vertexName2)
 
@@ -23,7 +24,7 @@ class Graph<T>(
             edges[vertex1] = vertexEdges
         }
 
-        vertexEdges.add(vertex2)
+        vertexEdges.add(EdgeInfo(vertex2, edgeInfo))
 
         edgeCount++
     }
@@ -37,7 +38,7 @@ class Graph<T>(
                 vertex
             }
 
-    fun getEdges(vertex: T): Iterable<Vertex<T>> {
+    fun getEdges(vertex: T): Iterable<EdgeInfo<T, E>> {
         return edges[getVertex(vertex)] ?: emptyList()
     }
 
@@ -56,3 +57,8 @@ class Graph<T>(
     }
 
 }
+
+/**
+ * @author Vlad Namashko
+ */
+data class EdgeInfo<T, E>(val vertex: Vertex<T>, val edge: E)

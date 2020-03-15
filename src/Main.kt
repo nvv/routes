@@ -13,51 +13,46 @@ data class Route<T>(
         val cost: Double
 )
 
+data class EdgeInfo(val cost: Double)
+
 class PathPrinter<T> {
 
-    private val graph = Graph<T>()
+    private val graph = Graph<T, EdgeInfo>()
 
     private val destinations = mutableMapOf<T, Destination<T>>()
 
-    private val conditions = mutableMapOf<Pair<Destination<T>, Destination<T>>, Double>()
-
     fun putEdge(route: Route<T>) {
-        graph.putEdge(route.src.id, route.dst.id)
+        graph.putEdge(route.src.id, route.dst.id, EdgeInfo(route.cost))
 
         destinations[route.src.id] = route.src
         destinations[route.dst.id] = route.dst
-
-        conditions[Pair(route.src, route.dst)] = route.cost
     }
 
     fun search(from: T, to: T) {
         val pathFinder = PathFinder(graph)
-        val pathList = mutableListOf<LinkedList<T>>()
+        val pathList = mutableListOf<LinkedList<Pair<T, EdgeInfo?>>>()
         pathFinder.search(from, to, pathList)
         print(from, to, pathList)
     }
 
-    private fun print(from: T, to: T, pathList: List<LinkedList<T>>) {
+    private fun print(from: T, to: T, pathList: List<LinkedList<Pair<T, EdgeInfo?>>>) {
         println("${destinations[from]?.name} -> ${destinations[to]?.name}: ")
         pathList.forEach { printCurrentPath(it) }
     }
 
-    private fun printCurrentPath(path: LinkedList<T>) {
-        var previousDestination: Destination<T>? = null
+    private fun printCurrentPath(path: LinkedList<Pair<T, EdgeInfo?>>) {
         var totalPrice = 0.0
         if (path.size >= 1) {
             val id = path.pollLast()
-            previousDestination = destinations[id]
-            print("${previousDestination?.name} ($id)")
+            print("${destinations[id.first]?.name} (${id.first})")
         }
         while (!path.isEmpty()) {
             val id = path.pollLast()
-            val destination = destinations[id]
-            print(" -> ${destination?.name} ($id)")
-            conditions[Pair(previousDestination, destination)]?.let {price ->
-                totalPrice += price
+            val destination = destinations[id.first]
+            print(" -> ${destination?.name} (${id.first})")
+            id.second?.let {
+                totalPrice += it.cost
             }
-            previousDestination = destination
         }
         print(": $totalPrice")
         println()
