@@ -48,17 +48,11 @@ class Graph<T, E>(
         vertices.forEach { v ->
             s.append("${v.value.vertex}: ")
             for (w in getEdges(v.value.vertex)) {
-                s.append("${w.vertex} ")
+                s.append("${w.toVertex} ")
             }
             s.append(NEWLINE)
         }
 
         return s.toString()
     }
-
 }
-
-/**
- * @author Vlad Namashko
- */
-data class EdgeInfo<T, E>(val vertex: Vertex<T>, val edge: E)

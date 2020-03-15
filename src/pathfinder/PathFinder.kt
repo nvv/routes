@@ -27,7 +27,7 @@ class PathFinder<T, E>(private val graph: Graph<T, E>) {
             pathList.add(LinkedList(path))
             numberOfPaths++
         } else {
-            graph.getEdges(from).filter { edge -> onPath[edge.vertex]?.not() == true }.forEach { edge -> search(edge.vertex.vertex, to, pathList, edge.edge) }
+            graph.getEdges(from).filter { edge -> onPath[edge.toVertex]?.not() == true }.forEach { edge -> search(edge.toVertex.vertex, to, pathList, edge.edgeParams) }
         }
 
         path.pop()
