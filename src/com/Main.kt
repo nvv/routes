@@ -1,19 +1,11 @@
-import pathfinder.PathFinder
-import pathfinder.model.Graph
+package com
+
+import com.pathfinder.engine.search.PathFinder
+import com.pathfinder.engine.search.model.Graph
+import com.pathfinder.travel.Destination
+import com.pathfinder.travel.EdgeInfo
+import com.pathfinder.travel.Route
 import java.util.*
-
-data class Destination<T>(
-        val id: T,
-        val name: String
-)
-
-data class Route<T>(
-        val src: Destination<T>,
-        val dst: Destination<T>,
-        val cost: Double
-)
-
-data class EdgeInfo(val cost: Double)
 
 class PathPrinter<T> {
 

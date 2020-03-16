@@ -1,4 +1,4 @@
-package pathfinder.model
+package com.pathfinder.engine.search.model
 
 /**
  * @author Vlad Namashko

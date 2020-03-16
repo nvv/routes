@@ -1,8 +1,7 @@
-package pathfinder
+package com.pathfinder.engine.search
 
-import pathfinder.model.EdgeInfo
-import pathfinder.model.Graph
-import pathfinder.model.Vertex
+import com.pathfinder.engine.search.model.Graph
+import com.pathfinder.engine.search.model.Vertex
 import java.util.*
 
 /**
