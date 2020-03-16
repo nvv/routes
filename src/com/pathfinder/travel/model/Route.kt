@@ -1,4 +1,4 @@
-package com.pathfinder.travel
+package com.pathfinder.travel.model
 
 /**
  * @author Vlad Namashko

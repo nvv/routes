@@ -2,54 +2,12 @@ package com
 
 import com.pathfinder.engine.search.PathFinder
 import com.pathfinder.engine.search.model.Graph
-import com.pathfinder.travel.Destination
-import com.pathfinder.travel.EdgeInfo
-import com.pathfinder.travel.Route
+import com.pathfinder.travel.PathPrinter
+import com.pathfinder.travel.TravelConnector
+import com.pathfinder.travel.model.Destination
+import com.pathfinder.travel.model.EdgeInfo
+import com.pathfinder.travel.model.Route
 import java.util.*
-
-class PathPrinter<T> {
-
-    private val graph = Graph<T, EdgeInfo>()
-
-    private val destinations = mutableMapOf<T, Destination<T>>()
-
-    fun putEdge(route: Route<T>) {
-        graph.putEdge(route.src.id, route.dst.id, EdgeInfo(route.cost))
-
-        destinations[route.src.id] = route.src
-        destinations[route.dst.id] = route.dst
-    }
-
-    fun search(from: T, to: T) {
-        val pathFinder = PathFinder(graph)
-        val pathList = mutableListOf<LinkedList<Pair<T, EdgeInfo?>>>()
-        pathFinder.search(from, to, pathList)
-        print(from, to, pathList)
-    }
-
-    private fun print(from: T, to: T, pathList: List<LinkedList<Pair<T, EdgeInfo?>>>) {
-        println("${destinations[from]?.name} -> ${destinations[to]?.name}: ")
-        pathList.forEach { printCurrentPath(it) }
-    }
-
-    private fun printCurrentPath(path: LinkedList<Pair<T, EdgeInfo?>>) {
-        var totalPrice = 0.0
-        if (path.size >= 1) {
-            val id = path.pollLast()
-            print("${destinations[id.first]?.name} (${id.first})")
-        }
-        while (!path.isEmpty()) {
-            val id = path.pollLast()
-            val destination = destinations[id.first]
-            print(" -> ${destination?.name} (${id.first})")
-            id.second?.let {
-                totalPrice += it.cost
-            }
-        }
-        print(": $totalPrice")
-        println()
-    }
-}
 
 fun main() {
 
@@ -76,11 +34,13 @@ fun main() {
             Route(dst5, dst4, 100.0)
     )
 
+    val connector = TravelConnector<Int>()
+    routes.forEach { connector.putEdge(it) }
+
     val printer = PathPrinter<Int>()
-    routes.forEach { printer.putEdge(it) }
 
-    printer.search(0, 4)
+    printer.print(dst0, dst4, connector.search(0, 4))
 
-    printer.search(4, 0)
+    printer.print(dst4, dst0, connector.search(4, 0))
 
 }
