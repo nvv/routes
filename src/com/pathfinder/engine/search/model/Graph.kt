@@ -7,7 +7,7 @@ import java.util.*
  */
 class Graph<T, E>(
         val vertices: MutableMap<T, Vertex<T>> = mutableMapOf(),
-        val edges: MutableMap<Vertex<T>, LinkedList<EdgeInfo<T, E>>> = mutableMapOf()
+        val edges: MutableMap<Vertex<T>, LinkedList<Edge<T, E>>> = mutableMapOf()
 ) {
 
     private val NEWLINE = System.getProperty("line.separator")
@@ -24,7 +24,7 @@ class Graph<T, E>(
             edges[vertex1] = vertexEdges
         }
 
-        vertexEdges.add(EdgeInfo(vertex2, edgeInfo))
+        vertexEdges.add(Edge(vertex1, vertex2, edgeInfo))
 
         edgeCount++
     }
@@ -38,7 +38,7 @@ class Graph<T, E>(
                 vertex
             }
 
-    fun getEdges(vertex: T): Iterable<EdgeInfo<T, E>> {
+    fun getEdges(vertex: T): Iterable<Edge<T, E>> {
         return edges[getVertex(vertex)] ?: emptyList()
     }
 
@@ -48,7 +48,7 @@ class Graph<T, E>(
         vertices.forEach { v ->
             s.append("${v.value.vertex}: ")
             for (w in getEdges(v.value.vertex)) {
-                s.append("${w.toVertex} ")
+                s.append("${w.to} ")
             }
             s.append(NEWLINE)
         }
