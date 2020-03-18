@@ -7,7 +7,7 @@ import java.util.*
  */
 class Graph<T, E>(
         val vertices: MutableMap<T, Vertex<T>> = mutableMapOf(),
-        val edges: MutableMap<Vertex<T>, LinkedList<Edge<T, E>>> = mutableMapOf()
+        val vertexEdges: MutableMap<Vertex<T>, LinkedList<Edge<T, E>>> = mutableMapOf()
 ) {
 
     private val NEWLINE = System.getProperty("line.separator")
@@ -18,10 +18,10 @@ class Graph<T, E>(
         val vertex1 = getVertex(vertexName1)
         val vertex2 = getVertex(vertexName2)
 
-        var vertexEdges = edges[vertex1]
+        var vertexEdges = vertexEdges[vertex1]
         if (vertexEdges == null) {
             vertexEdges = LinkedList()
-            edges[vertex1] = vertexEdges
+            this.vertexEdges[vertex1] = vertexEdges
         }
 
         vertexEdges.add(Edge(vertex1, vertex2, edgeInfo))
@@ -39,7 +39,7 @@ class Graph<T, E>(
             }
 
     fun getEdges(vertex: T): Iterable<Edge<T, E>> {
-        return edges[getVertex(vertex)] ?: emptyList()
+        return vertexEdges[getVertex(vertex)] ?: emptyList()
     }
 
     override fun toString(): String {
