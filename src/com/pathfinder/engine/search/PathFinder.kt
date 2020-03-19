@@ -19,18 +19,18 @@ class PathFinder<T, E>(private val graph: Graph<T, E>) {
     fun search(from: T, to: T): List<List<Edge<T, E>>> {
         val pathList = mutableListOf<List<Edge<T, E>>>()
 
-        search(from, from, to, null, pathList,  null)
+        search(pathList, from, from, to, null,  null)
 
         return pathList
     }
 
     // use DFS
     private fun search(
+            pathList: MutableList<List<Edge<T, E>>>,
             from: T,
             to: T,
             destination: T,
             currentPath: MutableList<Edge<T, E>>?,
-            pathList: MutableList<List<Edge<T, E>>>,
             edgeWeight: E? = null) {
 
         edgeWeight?.let {
@@ -46,11 +46,11 @@ class PathFinder<T, E>(private val graph: Graph<T, E>) {
         } else {
             graph.getEdges(to).filter { edge -> onPath[edge.to]?.not() == true }.forEach { edge ->
                 search(
+                        pathList,
                         to,
                         edge.to.vertex,
                         destination,
                         currentPath ?: mutableListOf(),
-                        pathList,
                         edge.weight
                 )
                 currentPath?.removeAt(currentPath.size - 1)
