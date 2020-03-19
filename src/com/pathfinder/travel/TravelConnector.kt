@@ -25,13 +25,12 @@ class TravelConnector<T> {
 
     fun search(from: T, to: T): List<LinkedList<Pair<Destination<T>, EdgeInfo?>>> {
         val pathFinder = PathFinder(graph)
-        val pathList = mutableListOf<LinkedList<Pair<T, EdgeInfo?>>>()
-        pathFinder.search(from, to, pathList)
+        val pathList = pathFinder.search(from, to)
         val result = mutableListOf<LinkedList<Pair<Destination<T>, EdgeInfo?>>>()
         pathList.forEach { path ->
-            val pathList = LinkedList<Pair<Destination<T>, EdgeInfo?>>()
-            path.forEach { item -> pathList.add(Pair(destinations[item.first] ?: destinations.values.first(), item.second)) }
-            result.add(pathList)
+//            val pathList = LinkedList<Pair<Destination<T>, EdgeInfo?>>()
+//            path.forEach { item -> pathList.add(Pair(destinations[item.from] ?: destinations.values.first(), item.second)) }
+//            result.add(pathList)
         }
 
         return result
