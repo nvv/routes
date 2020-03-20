@@ -1,35 +1,31 @@
 package com.pathfinder.travel
 
 import com.pathfinder.travel.model.Destination
-import com.pathfinder.travel.model.EdgeInfo
-import java.util.*
+import com.pathfinder.travel.model.Itinerary
 
 /**
  * @author Vlad Namashko
  */
 class PathPrinter<T> {
 
-    fun print(from: Destination<T>, to: Destination<T>, pathList: List<LinkedList<Pair<Destination<T>, EdgeInfo?>>>) {
-        println("${from?.name} -> ${to?.name}: ")
+    fun print(from: Destination<T>, to: Destination<T>, pathList: List<Itinerary<T>>) {
+        println("${from.name} -> ${to.name}: ")
         pathList.forEach { printCurrentPath(it) }
     }
 
-    private fun printCurrentPath(path: LinkedList<Pair<Destination<T>, EdgeInfo?>>) {
-        var totalPrice = 0.0
-        if (path.size >= 1) {
-            val id = path.pollLast()
-            print("${id.first?.name} (${id.first.id})")
-        }
-        while (!path.isEmpty()) {
-            val id = path.pollLast()
-            val destination = id.first
-            print(" -> ${destination?.name} (${id.first.id})")
-            id.second?.let {
-                totalPrice += it.cost
+    private fun printCurrentPath(path: Itinerary<T>) {
+        val totalPrice = path.routes.sumByDouble { it.cost }
+
+        path.routes.forEachIndexed { index, item ->
+            if (index == 0) {
+                print("${printDestination(item.src)} -> ${printDestination(item.dst)}")
+            } else {
+                print(" -> ${printDestination(item.dst)}")
             }
         }
         print(": $totalPrice")
         println()
     }
 
+    private fun printDestination(dst: Destination<T>) = "${dst.name} (${dst.id})"
 }

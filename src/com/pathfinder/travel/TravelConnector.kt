@@ -1,11 +1,9 @@
 package com.pathfinder.travel
 
+import com.pathfinder.utils.doubleLet
 import com.pathfinder.engine.search.PathFinder
 import com.pathfinder.engine.search.model.Graph
-import com.pathfinder.travel.model.Destination
-import com.pathfinder.travel.model.EdgeInfo
-import com.pathfinder.travel.model.Route
-import java.util.*
+import com.pathfinder.travel.model.*
 
 /**
  * @author Vlad Namashko
@@ -23,16 +21,16 @@ class TravelConnector<T> {
         destinations[route.dst.id] = route.dst
     }
 
-    fun search(from: T, to: T): List<LinkedList<Pair<Destination<T>, EdgeInfo?>>> {
+    fun search(from: T, to: T): List<Itinerary<T>> {
         val pathFinder = PathFinder(graph)
         val pathList = pathFinder.search(from, to)
-        val result = mutableListOf<LinkedList<Pair<Destination<T>, EdgeInfo?>>>()
-        pathList.forEach { path ->
-//            val pathList = LinkedList<Pair<Destination<T>, EdgeInfo?>>()
-//            path.forEach { item -> pathList.add(Pair(destinations[item.from] ?: destinations.values.first(), item.second)) }
-//            result.add(pathList)
-        }
 
-        return result
+        return pathList.map { path ->
+            Itinerary(path.mapNotNull { node ->
+                doubleLet(destinations[node.from.vertex], destinations[node.to.vertex], { from, to ->
+                    ItineraryRoute(from, to, node.weight.cost)
+                })
+            })
+        }
     }
 }
