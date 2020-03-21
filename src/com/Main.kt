@@ -6,6 +6,7 @@ import com.pathfinder.travel.model.Destination
 import com.pathfinder.travel.model.Route
 import com.pathfinder.utils.doubleLet
 import java.io.File
+import java.text.SimpleDateFormat
 
 fun main() {
 
@@ -18,13 +19,14 @@ fun main() {
                 }
     }
 
+    val format = SimpleDateFormat("hh:mmZ")
     val routes = mutableListOf<Route<Int>>()
     File("assets/routes.txt")
             .forEachLine { line ->
                 line.split(",")
                         .run {
                             doubleLet(destinations[get(0).trim().toInt()], destinations[get(1).trim().toInt()]) { from, to ->
-                                routes.add(Route(from, to, get(2).toDouble()))
+                                routes.add(Route(from, to, get(2).toDouble(), format.parse(get(3).trim()), format.parse(get(4).trim())))
                             }
                         }
             }
