@@ -1,0 +1,6 @@
+0, Vancouver
+1, Calgary
+2, Edmonton
+3, Winnipeg
+4, Toronto
+5, Montreal

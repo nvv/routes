@@ -4,6 +4,7 @@ import com.pathfinder.utils.doubleLet
 import com.pathfinder.engine.search.PathFinder
 import com.pathfinder.engine.search.model.Graph
 import com.pathfinder.travel.model.*
+import java.lang.RuntimeException
 
 /**
  * @author Vlad Namashko
@@ -21,16 +22,20 @@ class TravelConnector<T> {
         destinations[route.dst.id] = route.dst
     }
 
-    fun search(from: T, to: T): List<Itinerary<T>> {
-        val pathFinder = PathFinder(graph)
-        val pathList = pathFinder.search(from, to)
+    fun search(fromId: T, toId: T): TravelInfo<T> {
+        val from = destinations[fromId]
+        val to = destinations[toId]
 
-        return pathList.map { path ->
-            Itinerary(path.mapNotNull { node ->
-                doubleLet(destinations[node.from.vertex], destinations[node.to.vertex], { from, to ->
-                    ItineraryRoute(from, to, node.weight.cost)
-                })
-            })
-        }
+        if (from == null || to == null) throw RuntimeException("No valid src or dst ids")
+
+        val pathFinder = PathFinder(graph)
+        val pathList = pathFinder.search(fromId, toId)
+
+        return TravelInfo(
+                from = from,
+                to = to,
+                pathList = pathList.map { path -> Itinerary(path.mapNotNull { node -> ItineraryRoute(from, to, node.weight.cost) }) }
+        )
+
     }
 }

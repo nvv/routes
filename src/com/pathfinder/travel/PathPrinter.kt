@@ -2,15 +2,16 @@ package com.pathfinder.travel
 
 import com.pathfinder.travel.model.Destination
 import com.pathfinder.travel.model.Itinerary
+import com.pathfinder.travel.model.TravelInfo
 
 /**
  * @author Vlad Namashko
  */
 class PathPrinter<T> {
 
-    fun print(from: Destination<T>, to: Destination<T>, pathList: List<Itinerary<T>>) {
-        println("${from.name} -> ${to.name}: ")
-        pathList.forEach { printCurrentPath(it) }
+    fun print(travelInfo: TravelInfo<T>) {
+        println("${travelInfo.from.name} -> ${travelInfo.to.name}: ")
+        travelInfo.pathList.forEach { printCurrentPath(it) }
     }
 
     private fun printCurrentPath(path: Itinerary<T>) {
