@@ -19,7 +19,7 @@ fun main() {
                 }
     }
 
-    val format = SimpleDateFormat("hh:mmZ")
+    val format = SimpleDateFormat("HH:mmZ")
     val routes = mutableListOf<Route<Int>>()
     File("assets/routes.txt")
             .forEachLine { line ->
