@@ -34,7 +34,15 @@ class TravelConnector<T> {
         return TravelInfo(
                 from = from,
                 to = to,
-                pathList = pathList.map { path -> Itinerary(path.mapNotNull { node -> ItineraryRoute(from, to, node.weight.cost) }) }
+                pathList = pathList.map { path ->
+                    Itinerary(path.mapNotNull { node ->
+                        val fromDestination = destinations[node.from.vertex]
+                        val toDestination = destinations[node.to.vertex]
+                        doubleLet(fromDestination, toDestination) { from, to ->
+                            ItineraryRoute(from, to, node.weight.cost)
+                        }
+                    })
+                }
         )
 
     }
