@@ -11,12 +11,12 @@ import java.lang.RuntimeException
  */
 class TravelConnector<T> {
 
-    private val graph = Graph<T, EdgeInfo>()
+    private val graph = Graph<T, RouteInfo>()
 
     private val destinations = mutableMapOf<T, Destination<T>>()
 
     fun putEdge(route: Route<T>) {
-        graph.putEdge(route.src.id, route.dst.id, EdgeInfo(route.cost))
+        graph.putEdge(route.src.id, route.dst.id, RouteInfo(route.cost, route.departure, route.arrival))
 
         destinations[route.src.id] = route.src
         destinations[route.dst.id] = route.dst
@@ -39,7 +39,7 @@ class TravelConnector<T> {
                         val fromDestination = destinations[node.from.vertex]
                         val toDestination = destinations[node.to.vertex]
                         doubleLet(fromDestination, toDestination) { from, to ->
-                            ItineraryRoute(from, to, node.weight.cost)
+                            ItineraryRoute(from, to, node.weight.cost, node.weight.departure, node.weight.arrival)
                         }
                     })
                 }

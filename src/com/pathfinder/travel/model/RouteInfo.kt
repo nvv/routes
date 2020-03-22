@@ -5,9 +5,7 @@ import java.util.*
 /**
  * @author Vlad Namashko
  */
-data class Route<T>(
-        val src: Destination<T>,
-        val dst: Destination<T>,
+data class RouteInfo(
         val cost: Double,
         val departure: Date,
         val arrival: Date
