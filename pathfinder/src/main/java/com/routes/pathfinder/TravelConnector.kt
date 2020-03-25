@@ -3,6 +3,7 @@ package com.routes.pathfinder
 import com.routes.graph.PathFinder
 import com.routes.graph.model.Graph
 import com.routes.pathfinder.model.*
+import com.routes.pathfinder.scheduler.ItineraryScheduler
 import com.routes.utils.doubleLet
 import java.lang.RuntimeException
 
@@ -14,6 +15,8 @@ class TravelConnector<T> {
     private val graph = Graph<T, RouteInfo>()
 
     private val destinations = mutableMapOf<T, Destination<T>>()
+
+    private val scheduler = ItineraryScheduler<T>()
 
     fun putEdge(route: Route<T>) {
         graph.putEdge(route.src.id, route.dst.id, RouteInfo(route.cost, route.departure, route.arrival))
@@ -34,7 +37,7 @@ class TravelConnector<T> {
         return TravelInfo(
                 from = from,
                 to = to,
-                pathList = pathList.map { path ->
+                pathList = filterItinerary(pathList.map { path ->
                     Itinerary(path.mapNotNull { node ->
                         val fromDestination = destinations[node.from.vertex]
                         val toDestination = destinations[node.to.vertex]
@@ -42,8 +45,11 @@ class TravelConnector<T> {
                             ItineraryRoute(from, to, node.weight.cost, node.weight.departure, node.weight.arrival)
                         }
                     })
-                }
+                })
         )
+    }
 
+    private fun filterItinerary(pathList: List<Itinerary<T>>): List<Itinerary<T>> {
+        return pathList.filter { scheduler.isPathAcceptable(it) }
     }
 }
