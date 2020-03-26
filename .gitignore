@@ -3,5 +3,6 @@
 /graph/target/
 /pathfinder/target/
 /utils/target/
+/assets/target/
 .idea
 *.iml

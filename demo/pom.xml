@@ -20,6 +20,11 @@
             <artifactId>pathfinder</artifactId>
             <version>${project.version}</version>
         </dependency>
+        <dependency>
+            <groupId>routes</groupId>
+            <artifactId>assets</artifactId>
+            <version>${project.version}</version>
+        </dependency>
 
     </dependencies>
 
