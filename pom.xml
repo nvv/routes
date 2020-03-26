@@ -10,7 +10,7 @@
     <packaging>pom</packaging>
 
     <modules>
-        <module>assets</module>
+        <module>assets_loader</module>
         <module>utils</module>
         <module>graph</module>
         <module>pathfinder</module>

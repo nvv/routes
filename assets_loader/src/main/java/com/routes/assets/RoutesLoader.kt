@@ -4,13 +4,12 @@ import com.routes.assets.mapper.StringToDestinationMapper
 import com.routes.assets.mapper.StringToRoutesMapper
 import com.routes.pathfinder.model.Destination
 import com.routes.pathfinder.model.Route
+import java.io.File
 
 /**
  * @author Vlad Namashko
  */
-class RoutesLoader(
-        private val assetsLoader: AssetsLoader
-) {
+class RoutesLoader() {
 
     private val destinations = mutableMapOf<Int, Destination<Int>>()
 
@@ -19,13 +18,13 @@ class RoutesLoader(
 
     fun load(): List<Route<Int>> {
 
-        assetsLoader.getFileFromResources("destinations.txt").forEachLine { line ->
+        File("assets/destinations.txt").forEachLine { line ->
             val destination = destinationMapper.map(line)
             destinations[destination.id] = destination
         }
 
         val routes = mutableListOf<Route<Int>>()
-        assetsLoader.getFileFromResources("routes.txt")
+        File("assets/routes.txt")
                 .forEachLine { line ->
                     routeMapper.map(line)?.let {
                         routes.add(it)

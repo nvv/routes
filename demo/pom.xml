@@ -22,7 +22,7 @@
         </dependency>
         <dependency>
             <groupId>routes</groupId>
-            <artifactId>assets</artifactId>
+            <artifactId>assets_loader</artifactId>
             <version>${project.version}</version>
         </dependency>
 

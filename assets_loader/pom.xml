@@ -9,9 +9,9 @@
         <version>1.0-SNAPSHOT</version>
     </parent>
 
-    <artifactId>assets</artifactId>
+    <artifactId>assets_loader</artifactId>
     <packaging>jar</packaging>
-    <name>routes - assets</name>
+    <name>routes - assets_loader</name>
 
     <dependencies>
 
